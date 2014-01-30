@@ -9,10 +9,10 @@ import itertools
 class spiralPlot:
 
 	def drawLine(self, (x1, y1), (x2, y2)):
-		angle = math.atan2((y2 - y1),(x2 - x1)) 
 		l = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-		x2 = x1 + (l+self.delta)*math.cos(angle)
-		y2 = y1 + (l+self.delta)*math.sin(angle)
+		x2 = x1 + (l+self.delta)*(x2-x1)/l
+
+		y2 = y1 + (l+self.delta)*(y2-y1)/l
 	#	pygame.draw.aalines(self.screen, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), False, [(x1, y1), (x2, y2)], 1)
 		pygame.draw.aalines(self.screen, self.c_iter.next(), False, [(x1, y1), (x2, y2)], 1)	
 		return (x2, y2)
