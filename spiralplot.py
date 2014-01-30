@@ -58,9 +58,10 @@ class spiralPlot:
 
 			pygame.display.update()
 
-		for event in pygame.event.get():
-			if event.type == pygame.QUIT:
-				return
+		while 1:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					return
 
 spiralPlot().run()
 pygame.quit()
