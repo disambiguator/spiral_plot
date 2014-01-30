@@ -36,18 +36,12 @@ class spiralPlot:
 		pink = (255,200,200)
 		colors = [red, green, blue] #darkBlue], white, black, pink]
 		self.c_iter=itertools.cycle(colors)
-		coords = []
-		angle = math.radians(90)
-		x1 = pygame.display.Info().current_w/2
-		y1 = pygame.display.Info().current_h/2
-		coords.append((x1,y1))	
-		coords.append((x1+l, y1))
-		x3 = x1+l-l*math.cos(angle)
-		y3 = y1-l*math.sin(angle)
-		#coords.append((x3, y3))
-		coords.append((x1+l, y1+l))
-		coords.append((x1, y1+l))
-		#x4 = 
+
+		SIDE_COUNT = 4
+		theta = 2*math.pi/SIDE_COUNT
+		x0 = pygame.display.Info().current_w/2
+		y0 = pygame.display.Info().current_h/2
+		coords = [ (x0 + l*math.cos(n*theta),y0 + l*math.sin(n*theta)) for n in range(SIDE_COUNT) ]
 		
 		pygame.draw.aalines(self.screen, white, False, coords, 1)
 
@@ -71,4 +65,3 @@ class spiralPlot:
 spiralPlot().run()
 pygame.quit()
 sys.exit()
-
