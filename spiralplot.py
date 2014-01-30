@@ -64,8 +64,11 @@ class spiralPlot:
 
 			pygame.display.update()
 
-		raw_input("Press enter to exit")
-		pygame.quit()
-		sys.exit()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				return
 
 spiralPlot().run()
+pygame.quit()
+sys.exit()
+
