@@ -37,7 +37,7 @@ class spiralPlot:
 		colors = [red, green, blue] #darkBlue], white, black, pink]
 		self.c_iter=itertools.cycle(colors)
 
-		SIDE_COUNT = 4
+		SIDE_COUNT = 5
 		theta = 2*math.pi/SIDE_COUNT
 		x0 = pygame.display.Info().current_w/2
 		y0 = pygame.display.Info().current_h/2
@@ -45,12 +45,8 @@ class spiralPlot:
 		
 		pygame.draw.aalines(self.screen, white, False, coords, 1)
 
-		n = len(coords) - 1
-		for _ in range(10000):
-			coords[0] = self.drawLine(coords[n], coords[0])
-			for i in range(n):	
-				coords[i+1] = self.drawLine(coords[i], coords[i+1])
-		#	time.sleep(0.05)
+		for _ in range(1000):
+			coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i]) for i in range(SIDE_COUNT)]
 
 			for event in pygame.event.get():
 				if event.type == pygame.QUIT:
