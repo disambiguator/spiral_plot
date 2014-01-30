@@ -58,6 +58,10 @@ class spiralPlot:
 				coords[i+1] = self.drawLine(coords[i], coords[i+1])
 		#	time.sleep(0.05)
 
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					return
+
 			pygame.display.update()
 
 		raw_input("Press enter to exit")
