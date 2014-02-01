@@ -5,6 +5,7 @@ import math
 import time
 import random
 import itertools
+import argparse
 
 class spiralPlot:
 
@@ -17,9 +18,8 @@ class spiralPlot:
         pygame.draw.aalines(self.screen, self.c_iter.next(), False, [(x1, y1), (x2, y2)], 1)    
         return (x2, y2)
 
-    def run(self):
-        self.delta = 5
-        l = 15
+    def run(self, l=15, delta=15, SIDE_COUNT=8):
+        self.delta = delta
         
         pygame.init()
         screen_width = pygame.display.Info().current_w
@@ -37,7 +37,6 @@ class spiralPlot:
         colors = [red, green, blue] #darkBlue], white, black, pink]
         self.c_iter=itertools.cycle(colors)
 
-        SIDE_COUNT = 5
         theta = 2*math.pi/SIDE_COUNT
         x0 = pygame.display.Info().current_w/2
         y0 = pygame.display.Info().current_h/2
@@ -59,6 +58,11 @@ class spiralPlot:
                 if event.type == pygame.QUIT:
                     return
 
-spiralPlot().run()
+parser= argparse.ArgumentParser()
+parser.add_argument('length', type=int)
+parser.add_argument('delta', type=int)
+parser.add_argument('sidecount', type=int)
+args = parser.parse_args()
+spiralPlot().run(l=args.length, delta=args.delta, SIDE_COUNT=args.sidecount)
 pygame.quit()
 sys.exit()
