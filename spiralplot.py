@@ -44,9 +44,8 @@ class spiralPlot:
 
         (samplerate, audio_data) = read(filename)
         
-        audio_data = [numpy.average(i) for i in audio_data]
+        audio_data = numpy.average(audio_data, axis=1)
  
-        samplerate = samplerate/2
         (cA, cD) = pywt.dwt(numpy.array(audio_data), 'db1')
         pygame.mixer.music.load(filename)
         pygame.mixer.music.play()
