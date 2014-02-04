@@ -6,6 +6,9 @@ import time
 import random
 import itertools
 import argparse
+import numpy
+from scipy.io.wavfile import read
+import pywt
 
 class spiralPlot:
 
@@ -37,29 +40,38 @@ class spiralPlot:
         colors = [red, green, blue] #darkBlue], white, black, pink]
         self.c_iter=itertools.cycle(colors)
 
+        filename = 'loungedub.wav'
 
+        (samplerate, audio_data) = read(filename)
+        
+        audio_data = [numpy.average(i) for i in audio_data]
+ 
+        samplerate = samplerate/2
+        (cA, cD) = pywt.dwt(numpy.array(audio_data), 'db1')
+        pygame.mixer.music.load(filename)
+        pygame.mixer.music.play()
 
-        for SIDE_COUNT in range(3, 13):
-            now = time.time()
-            while time.time() < now + 2*math.pi:
-                theta = 2*math.pi/SIDE_COUNT
-                x0 = pygame.display.Info().current_w/2
-                y0 = pygame.display.Info().current_h/2
-                coords = [ (x0 + l*math.cos(n*theta),y0 + l*math.sin(n*theta)) for n in range(SIDE_COUNT) ]
+        start_time = time.time()
 
-                pygame.draw.aalines(self.screen, white, False, coords, 1)
+        while 1:
+            theta = 2*math.pi/SIDE_COUNT
+            x0 = pygame.display.Info().current_w/2
+            y0 = pygame.display.Info().current_h/2
+            coords = [ (x0 + l*math.cos(n*theta),y0 + l*math.sin(n*theta)) for n in range(SIDE_COUNT) ]
 
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        return
+            pygame.draw.aalines(self.screen, white, False, coords, 1)
 
-                self.delta = 33 + 30 * math.cos( time.time() )
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return
 
-                for _ in range(1000):
-                    coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i]) for i in range(SIDE_COUNT)]
+            self.delta = cA[int((time.time() - start_time)*samplerate)]/10000
 
-                pygame.display.update()
-                self.screen.fill( (0,0,0) )
+            for _ in range(100):
+                coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i]) for i in range(SIDE_COUNT)]
+
+            pygame.display.update()
+            self.screen.fill( (0,0,0) )
 
 parser= argparse.ArgumentParser()
 parser.add_argument('length', type=int)
