@@ -61,8 +61,6 @@ class spiralPlot:
         pygame.mixer.music.load(filename)
         pygame.mixer.music.play()
 
-        start_time = time.time()
-
         while 1:
             theta = 2*math.pi/SIDE_COUNT
             x0 = pygame.display.Info().current_w/2
@@ -75,8 +73,8 @@ class spiralPlot:
                 if event.type == pygame.QUIT:
                     return
 
-            self.delta = X[math.floor((time.time() - start_time)/hop)]/100
-            print self.delta
+            self.delta = X[math.floor(pygame.mixer.music.get_pos()/(hop*1000))]/100
+#            print self.delta
 
             for _ in range(100):
                 coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i]) for i in range(SIDE_COUNT)]
