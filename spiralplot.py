@@ -8,7 +8,7 @@ import itertools
 import argparse
 import numpy
 from scipy.io.wavfile import read
-import pywt
+import scipy
 
 class spiralPlot:
 
@@ -20,6 +20,14 @@ class spiralPlot:
     #   pygame.draw.aalines(self.screen, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), False, [(x1, y1), (x2, y2)], 1)
         pygame.draw.aalines(self.screen, self.c_iter.next(), False, [(x1, y1), (x2, y2)], 1)    
         return (x2, y2)
+
+    def stft(self, x, fs, framesz, hop):
+        framesamp = int(framesz*fs)
+        hopsamp = int(hop*fs)
+        w = scipy.hamming(framesamp)
+        X = scipy.array([scipy.fft(w*x[i:i+framesamp])
+                         for i in range(0, len(x)-framesamp, hopsamp)])
+        return X
 
     def run(self, l=15, delta=15, SIDE_COUNT=8):
         self.delta = delta
@@ -43,10 +51,13 @@ class spiralPlot:
         filename = 'loungedub.wav'
 
         (samplerate, audio_data) = read(filename)
-        
         audio_data = numpy.average(audio_data, axis=1)
+
+        frame_size = 0.050 #50 milliseconds
+        hop =   0.020 #20 milliseconds
+        X = self.stft(audio_data, samplerate, frame_size, hop)
+        X = numpy.average(X, axis=1)
  
-        (cA, cD) = pywt.dwt(numpy.array(audio_data), 'db1')
         pygame.mixer.music.load(filename)
         pygame.mixer.music.play()
 
@@ -64,7 +75,8 @@ class spiralPlot:
                 if event.type == pygame.QUIT:
                     return
 
-            self.delta = cA[int((time.time() - start_time)*samplerate)]/10000
+            self.delta = X[math.floor((time.time() - start_time)/hop)]/100
+            print self.delta
 
             for _ in range(100):
                 coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i]) for i in range(SIDE_COUNT)]
