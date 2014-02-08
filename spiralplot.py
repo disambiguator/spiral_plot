@@ -51,7 +51,7 @@ class spiralPlot:
         filename = 'loungedub.wav'
 
         (samplerate, audio_data) = read(filename)
-        audio_data = numpy.average(audio_data, axis=1)
+        audio_data, _ = audio_data.reshape((2,-1))
 
         frame_size = 0.050 #50 milliseconds
         hop =   0.020 #20 milliseconds
