@@ -32,12 +32,6 @@ class SpiralPlot:
         return X
 
     def run(self, l=15, SIDE_COUNT=8):
-        
-        pygame.init()
-        screen_width = pygame.display.Info().current_w
-        screen_height = pygame.display.Info().current_h
-        self.screen=pygame.display.set_mode((screen_width, screen_height))
-        
         #colors
         red = (255, 0, 0)
         green = (0, 255, 0)
@@ -64,7 +58,12 @@ class SpiralPlot:
 
         v_abs = numpy.vectorize(abs)
         averages = [v_abs(a) for a in averages]
- 
+
+        pygame.init()
+        screen_width = pygame.display.Info().current_w
+        screen_height = pygame.display.Info().current_h
+        self.screen = pygame.display.set_mode((screen_width, screen_height))
+
         pygame.mixer.music.load(filename)
         pygame.mixer.music.play()
 
