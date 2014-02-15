@@ -12,11 +12,11 @@ import scipy
 
 class spiralPlot:
 
-    def drawLine(self, (x1, y1), (x2, y2)):
+    def drawLine(self, (x1, y1), (x2, y2), delta):
         l = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-        x2 = x1 + (l+self.delta)*(x2-x1)/l
+        x2 = x1 + (l+delta)*(x2-x1)/l
 
-        y2 = y1 + (l+self.delta)*(y2-y1)/l
+        y2 = y1 + (l+delta)*(y2-y1)/l
     #   pygame.draw.aalines(self.screen, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), False, [(x1, y1), (x2, y2)], 1)
         pygame.draw.aalines(self.screen, self.c_iter.next(), False, [(x1, y1), (x2, y2)], 1)    
         return (x2, y2)
@@ -30,7 +30,6 @@ class spiralPlot:
         return X
 
     def run(self, l=15, delta=15, SIDE_COUNT=8):
-        self.delta = delta
         
         pygame.init()
         screen_width = pygame.display.Info().current_w
@@ -55,8 +54,12 @@ class spiralPlot:
 
         frame_size = 0.050 #50 milliseconds
         hop =   0.020 #20 milliseconds
-        X = self.stft(audio_data, samplerate, frame_size, hop)
-        X = numpy.average(X, axis=1)
+        fft = self.stft(audio_data, samplerate, frame_size, hop)
+        bins = numpy.split(fft, SIDE_COUNT, axis=1)
+        averages = [numpy.average(b, axis=1) for b in bins]
+
+        v_abs = numpy.vectorize(abs)
+        averages = [v_abs(a) for a in averages]
  
         pygame.mixer.music.load(filename)
         pygame.mixer.music.play()
@@ -73,11 +76,10 @@ class spiralPlot:
                 if event.type == pygame.QUIT:
                     return
 
-            self.delta = X[math.floor(pygame.mixer.music.get_pos()/(hop*1000))]/100
-#            print self.delta
+#            self.delta = X[math.floor(pygame.mixer.music.get_pos()/(hop*1000))]/100
 
             for _ in range(100):
-                coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i]) for i in range(SIDE_COUNT)]
+                coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i], averages[i][math.floor(pygame.mixer.music.get_pos()/(hop*1000))]/100) for i in range(SIDE_COUNT)]
 
             pygame.display.update()
             self.screen.fill( (0,0,0) )
