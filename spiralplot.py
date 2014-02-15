@@ -2,7 +2,6 @@
 import sys
 import pygame
 import math
-import time
 import random
 import itertools
 import argparse
@@ -10,7 +9,10 @@ import numpy
 from scipy.io.wavfile import read
 import scipy
 
-class spiralPlot:
+class SpiralPlot:
+
+    def __init__(self):
+        pass
 
     def drawLine(self, (x1, y1), (x2, y2), delta):
         l = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -29,7 +31,7 @@ class spiralPlot:
                          for i in range(0, len(x)-framesamp, hopsamp)])
         return X
 
-    def run(self, l=15, delta=15, SIDE_COUNT=8):
+    def run(self, l=15, SIDE_COUNT=8):
         
         pygame.init()
         screen_width = pygame.display.Info().current_w
@@ -37,20 +39,22 @@ class spiralPlot:
         self.screen=pygame.display.set_mode((screen_width, screen_height))
         
         #colors
-        red = (255,0,0)
-        green = (0,255,0)
-        blue = (0,0,255)
-        darkBlue = (0,0,128)
-        white = (255,255,255)
-        black = (0,0,0)
-        pink = (255,200,200)
+        red = (255, 0, 0)
+        green = (0, 255, 0)
+        blue = (0, 0, 255)
+        dark_blue = (0, 0, 128)
+        white = (255, 255, 255)
+        black = (0, 0, 0)
+        pink = (255, 200, 200)
         colors = [red, green, blue] #darkBlue], white, black, pink]
-        self.c_iter=itertools.cycle(colors)
+        self.c_iter = itertools.cycle(colors)
 
         filename = 'loungedub.wav'
 
         (samplerate, audio_data) = read(filename)
-        audio_data, _ = audio_data.reshape((2,-1))
+
+        #Ditch one of the audio channels
+        audio_data, _ = audio_data.reshape((2, -1))
 
         frame_size = 0.050 #50 milliseconds
         hop =   0.020 #20 milliseconds
@@ -66,9 +70,9 @@ class spiralPlot:
 
         while 1:
             theta = 2*math.pi/SIDE_COUNT
-            x0 = pygame.display.Info().current_w/2
-            y0 = pygame.display.Info().current_h/2
-            coords = [ (x0 + l*math.cos(n*theta),y0 + l*math.sin(n*theta)) for n in range(SIDE_COUNT) ]
+            x_0 = pygame.display.Info().current_w/2
+            y_0 = pygame.display.Info().current_h/2
+            coords = [ (x_0 + l*math.cos(n*theta), y_0 + l*math.sin(n*theta)) for n in range(SIDE_COUNT) ]
 
             pygame.draw.aalines(self.screen, white, False, coords, 1)
 
@@ -82,13 +86,12 @@ class spiralPlot:
                 coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i], averages[i][math.floor(pygame.mixer.music.get_pos()/(hop*1000))]/100) for i in range(SIDE_COUNT)]
 
             pygame.display.update()
-            self.screen.fill( (0,0,0) )
+            self.screen.fill( (0, 0, 0) )
 
-parser= argparse.ArgumentParser()
-parser.add_argument('length', type=int)
-parser.add_argument('delta', type=int)
-parser.add_argument('sidecount', type=int)
-args = parser.parse_args()
-spiralPlot().run(l=args.length, delta=args.delta, SIDE_COUNT=args.sidecount)
+PARSER = argparse.ArgumentParser()
+PARSER.add_argument('length', type=int)
+PARSER.add_argument('sidecount', type=int)
+ARGS = PARSER.parse_args()
+SpiralPlot().run(l=ARGS.length, SIDE_COUNT=ARGS.sidecount)
 pygame.quit()
 sys.exit()
