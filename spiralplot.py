@@ -79,10 +79,13 @@ class SpiralPlot:
                 if event.type == pygame.QUIT:
                     return
 
-#            self.delta = X[math.floor(pygame.mixer.music.get_pos()/(hop*1000))]/100
-
             for _ in range(100):
-                coords = [self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i], averages[i][math.floor(pygame.mixer.music.get_pos()/(hop*1000))]/100) for i in range(SIDE_COUNT)]
+                new_coords = []
+                for i in range(SIDE_COUNT):
+                    delta = averages[i][math.floor(pygame.mixer.music.get_pos()/(hop*1000))]/1000
+                    new_coords.append(self.drawLine(coords[(i-1) % SIDE_COUNT], coords[i], delta))
+
+                coords = new_coords
 
             pygame.display.update()
             self.screen.fill( (0, 0, 0) )
