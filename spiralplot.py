@@ -17,6 +17,8 @@ class SpiralPlot:
         colors = [Color.red, Color.green, Color.blue] #darkBlue], white, black, pink]
         self.color_iterator = itertools.cycle(colors)
 
+        pygame.init()
+
     def drawLine(self, (x1, y1), (x2, y2), delta):
         l = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
         x2 = x1 + (l+delta)*(x2-x1)/l
@@ -38,7 +40,7 @@ class SpiralPlot:
 
         filename = 'loungedub.wav'
 
-        (samplerate, audio_data) = read(filename)
+        samplerate, audio_data = read(filename)
 
         #Ditch one of the audio channels
         audio_data, _ = audio_data.reshape((2, -1))
@@ -52,7 +54,6 @@ class SpiralPlot:
         v_abs = numpy.vectorize(abs)
         averages = [v_abs(a) for a in averages]
 
-        pygame.init()
         screen_width = pygame.display.Info().current_w
         screen_height = pygame.display.Info().current_h
         self.screen = pygame.display.set_mode((screen_width, screen_height))
