@@ -8,11 +8,14 @@ import argparse
 import numpy
 from scipy.io.wavfile import read
 import scipy
+import Color
 
 class SpiralPlot:
 
     def __init__(self):
-        pass
+	# Color Iterator
+        colors = [Color.red, Color.green, Color.blue] #darkBlue], white, black, pink]
+        self.color_iterator = itertools.cycle(colors)
 
     def drawLine(self, (x1, y1), (x2, y2), delta):
         l = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
@@ -20,7 +23,7 @@ class SpiralPlot:
 
         y2 = y1 + (l+delta)*(y2-y1)/l
     #   pygame.draw.aalines(self.screen, (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)), False, [(x1, y1), (x2, y2)], 1)
-        pygame.draw.aalines(self.screen, self.c_iter.next(), False, [(x1, y1), (x2, y2)], 1)    
+        pygame.draw.aalines(self.screen, self.color_iterator.next(), False, [(x1, y1), (x2, y2)], 1)
         return (x2, y2)
 
     def stft(self, x, fs, framesz, hop):
@@ -32,16 +35,6 @@ class SpiralPlot:
         return X
 
     def run(self, l=15, SIDE_COUNT=8):
-        #colors
-        red = (255, 0, 0)
-        green = (0, 255, 0)
-        blue = (0, 0, 255)
-        dark_blue = (0, 0, 128)
-        white = (255, 255, 255)
-        black = (0, 0, 0)
-        pink = (255, 200, 200)
-        colors = [red, green, blue] #darkBlue], white, black, pink]
-        self.c_iter = itertools.cycle(colors)
 
         filename = 'loungedub.wav'
 
@@ -73,7 +66,7 @@ class SpiralPlot:
             y_0 = pygame.display.Info().current_h/2
             coords = [ (x_0 + l*math.cos(n*theta), y_0 + l*math.sin(n*theta)) for n in range(SIDE_COUNT) ]
 
-            pygame.draw.aalines(self.screen, white, False, coords, 1)
+            pygame.draw.aalines(self.screen, Color.white, False, coords, 1)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
